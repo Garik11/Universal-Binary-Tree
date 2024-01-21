@@ -463,7 +463,6 @@ void TreeBranchOut(TreeBin* tree, const TreeNode* node, TREE_OUT_TYPE out_type){
     }
 }
 
-#warning Улчшить внешний вид немного
 void TreeNodePairOut(const TreeNode* node){
     putchar('\n');
     if(node != NULL && node->left != NULL){

@@ -106,7 +106,6 @@ enum{
     ONE_ELEMENT   = 1  
 };
 
-#warning add_new_format
 /*Formatted out, will be include*/
 enum TREE_OUT_TYPE{
     TREE_NORMAL_OUT,

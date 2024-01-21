@@ -25,20 +25,17 @@ int main(void) {
                                 containerPrint
                             );
                             
-    for(size_t i = 0; i < 3; i++){
-        unsigned long long x = {0}, y = {0};
-        char c = {0};
-        scanf("%llu %llu %c", &x, &y, &c);
-        Container cont = {f(x, y), c};
+    for(size_t i = 0; i < 10; i++){
+        Container cont = {f(rand(), rand()), 'a' + i};
         TreeSetElement(tree, (void*)(&cont));
     }
     TreeOut(tree, TREE_REVERSE_OUT);
 
-    Container el_for_del = {f(1, 2), 'H'};
+    //Container el_for_del = {f(1, 2), 'H'};
 
-    TreeDelElement(tree, (void*)&el_for_del);
+    //TreeDelElement(tree, (void*)&el_for_del);
 
-    TreeOut(tree, TREE_REVERSE_OUT);
+    //TreeOut(tree, TREE_REVERSE_OUT);
 
     TreeDump(tree, {TREE_ALL_OK});
 

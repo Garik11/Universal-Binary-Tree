@@ -34,7 +34,13 @@ int main(void) {
     }
     TreeOut(tree, TREE_REVERSE_OUT);
 
-    TREE_DUMP(tree, {TREE_ALL_OK});
+    Container el_for_del = {f(1, 2), 'H'};
+
+    TreeDelElement(tree, (void*)&el_for_del);
+
+    TreeOut(tree, TREE_REVERSE_OUT);
+
+    TreeDump(tree, {TREE_ALL_OK});
 
     TreeDtor(tree);
 }

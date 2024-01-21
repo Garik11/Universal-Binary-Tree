@@ -11,22 +11,74 @@ TreeBin* _TreeCtor(
 
                     const char* creation_file_name,
                     const char* creation_func_name,
-                    const int   creation_line_numb
-                    
+                    const int   creation_line_numb    
 ){
 
-    assert(ContainerCtor    != NULL);
-    assert(ContainerDtor    != NULL);
-    assert(ContainerCopy    != NULL);
-    assert(ContainerComp    != NULL);
-    assert(ContainerPaint   != NULL);
+    tree_assert(
+                    ContainerCtor    != NULL,
+                    ((TreeBin*)NULL),
+                    TREE_ERROR_BAD_CTOR_POINTER,
+                    "Invalid pointer to the ContainerCtor function!",
+                    NON_VOID
+    );
 
-    assert(creation_file_name != NULL);
-    assert(creation_func_name != NULL);
-    assert(creation_line_numb != NULL);
+    tree_assert(
+                    ContainerDtor    != NULL,
+                    ((TreeBin*)NULL),
+                    TREE_ERROR_BAD_DTOR_POINTER,
+                    "Invalid pointer to the ContainerDtor function!",
+                    NON_VOID
+    );
+
+    tree_assert(
+                    ContainerCopy    != NULL,
+                    ((TreeBin*)NULL),
+                    TREE_ERROR_BAD_COPY_POINTER,
+                    "Invalid pointer to the ContainerCopy function!",
+                    NON_VOID
+    );
+
+    tree_assert(
+                    ContainerComp    != NULL,
+                    ((TreeBin*)NULL),
+                    TREE_ERROR_BAD_COMP_POINTER,
+                    "Invalid pointer to the ContainerComp function!",
+                    NON_VOID
+    );
+
+    tree_assert(
+                    ContainerPaint  != NULL,
+                    ((TreeBin*)NULL),
+                    TREE_ERROR_BAD_PRIN_POINTER,
+                    "Invalid pointer to the ContainerPaint function!",
+                    NON_VOID
+    );
+
+    tree_assert(
+                    creation_file_name  != NULL,
+                    ((TreeBin*)NULL),
+                    TREE_ERROR_BAD_CRFI_POINTER,
+                    "Invalid pointer to the creation_file_name!",
+                    NON_VOID
+    );
+
+    tree_assert(
+                    creation_func_name  != NULL,
+                    ((TreeBin*)NULL),
+                    TREE_ERROR_BAD_CRFU_POINTER,
+                    "Invalid pointer to the creation_func_name!",
+                    NON_VOID
+    );
 
     TreeBin* tree = (TreeBin*)calloc(ONE_ELEMENT, sizeof(TreeBin));
-    assert(tree != NULL);
+    
+    tree_assert(
+                    tree != NULL,
+                    tree,
+                    TREE_ERROR_TREECTOR_NOT_ALLOC_MEM,
+                    "Calloc failed to allocate memory!",
+                    NON_VOID
+    );
 
     tree->number_of_nodes = 0;
 
@@ -47,7 +99,13 @@ TreeBin* _TreeCtor(
 
 void TreeDtor(TreeBin* tree){
 
-    assert(tree != NULL);
+    tree_assert(
+                    tree != NULL, 
+                    tree, 
+                    TREE_ERROR_BAD_BIN_POINTER,
+                    "Incorrect pointer to the tree!",
+                    VOID
+                );
 
     TreeNodeDeleteBranch(tree, tree->nodes);
 
@@ -75,8 +133,6 @@ TreeErrors TreeVerificator(const TreeBin* tree){
         output.bit_mask |= TREE_ERROR_BAD_CRFI_POINTER;
     if(tree->CREATION_FUNC == NULL)
         output.bit_mask |= TREE_ERROR_BAD_CRFU_POINTER;
-    if(tree->CREATION_LINE == NULL)
-        output.bit_mask |= TREE_ERROR_BDA_LINU_POINTER;
     return output;
 }
 
@@ -88,7 +144,7 @@ static void _TreeDumpOutNodes(const TreeNode* node){
     }
 }
 
-void TreeDump(
+void _TreeDump(
                 const TreeBin*  tree    , 
                 const TreeErrors err    , 
                 const char* tree_name   , 
@@ -108,13 +164,13 @@ void TreeDump(
     const char* correctForOutputFlNm = (file_name == NULL) ? "???" : file_name;
 
     printf(
-        "Tree[%p] %s called from %s in %s(%d)\n", 
-        tree, 
-        correctForOutputTrNm, 
-        correctForOutputFuNm, 
-        correctForOutputFlNm,
-        line_numb
-    );
+            "Tree[%p] %s called from %s in %s(%d)\n", 
+            tree, 
+            correctForOutputTrNm, 
+            correctForOutputFuNm, 
+            correctForOutputFlNm,
+            line_numb
+        );
 
     /*if TreeBin pointer is correct*/
     if(!(tree_errors.bit_mask & TREE_ERROR_BAD_BIN_POINTER)){
@@ -138,18 +194,29 @@ void TreeDump(
 
     printf("Error list:\n");
     printf("\t{\n");
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_BIN_POINTER    ) printf("\t\t"), printerror(TREE_ERROR_BAD_BIN_POINTER     );
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_NODE_POINTER   ) printf("\t\t"), printerror(TREE_ERROR_BAD_NODE_POINTER    );
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_LEFT_POINTER   ) printf("\t\t"), printerror(TREE_ERROR_BAD_LEFT_POINTER    );
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_RIGHT_POINTER  ) printf("\t\t"), printerror(TREE_ERROR_BAD_RIGHT_POINTER   );
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_COMP_POINTER   ) printf("\t\t"), printerror(TREE_ERROR_BAD_COMP_POINTER    );
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_CTOR_POINTER   ) printf("\t\t"), printerror(TREE_ERROR_BAD_CTOR_POINTER    );
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_COPY_POINTER   ) printf("\t\t"), printerror(TREE_ERROR_BAD_COPY_POINTER    );
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_DTOR_POINTER   ) printf("\t\t"), printerror(TREE_ERROR_BAD_DTOR_POINTER    );
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_PRIN_POINTER   ) printf("\t\t"), printerror(TREE_ERROR_BAD_PRIN_POINTER    );
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_CRFI_POINTER   ) printf("\t\t"), printerror(TREE_ERROR_BAD_CRFI_POINTER    );
-    if(tree_errors.bit_mask & TREE_ERROR_BAD_CRFU_POINTER   ) printf("\t\t"), printerror(TREE_ERROR_BAD_CRFU_POINTER    );
-    if(tree_errors.bit_mask & TREE_ERROR_BDA_LINU_POINTER   ) printf("\t\t"), printerror(TREE_ERROR_BDA_LINU_POINTER    );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_BIN_POINTER    ) printf("\t\t"), PrintError(TREE_ERROR_BAD_BIN_POINTER     );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_NODE_POINTER   ) printf("\t\t"), PrintError(TREE_ERROR_BAD_NODE_POINTER    );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_LEFT_POINTER   ) printf("\t\t"), PrintError(TREE_ERROR_BAD_LEFT_POINTER    );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_RIGHT_POINTER  ) printf("\t\t"), PrintError(TREE_ERROR_BAD_RIGHT_POINTER   );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_COMP_POINTER   ) printf("\t\t"), PrintError(TREE_ERROR_BAD_COMP_POINTER    );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_CTOR_POINTER   ) printf("\t\t"), PrintError(TREE_ERROR_BAD_CTOR_POINTER    );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_COPY_POINTER   ) printf("\t\t"), PrintError(TREE_ERROR_BAD_COPY_POINTER    );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_DTOR_POINTER   ) printf("\t\t"), PrintError(TREE_ERROR_BAD_DTOR_POINTER    );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_PRIN_POINTER   ) printf("\t\t"), PrintError(TREE_ERROR_BAD_PRIN_POINTER    );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_CRFI_POINTER   ) printf("\t\t"), PrintError(TREE_ERROR_BAD_CRFI_POINTER    );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_CRFU_POINTER   ) printf("\t\t"), PrintError(TREE_ERROR_BAD_CRFU_POINTER    );
+
+    if(tree_errors.bit_mask & TREE_ERROR_ELEMENT_NOT_EXIST      ) printf("\t\t"), PrintError(TREE_ERROR_ELEMENT_NOT_EXIST           );
+    if(tree_errors.bit_mask & TREE_ERROR_CODE_IS_CORRUPTED      ) printf("\t\t"), PrintError(TREE_ERROR_CODE_IS_CORRUPTED           );
+    if(tree_errors.bit_mask & TREE_ERROR_CTOR_NOT_ALLOC_MEM     ) printf("\t\t"), PrintError(TREE_ERROR_CTOR_NOT_ALLOC_MEM          );
+    if(tree_errors.bit_mask & TREE_ERROR_COMP_ERROR_VALUE       ) printf("\t\t"), PrintError(TREE_ERROR_COMP_ERROR_VALUE            );
+    if(tree_errors.bit_mask & TREE_ERROR_BAD_OUT_TYPE           ) printf("\t\t"), PrintError(TREE_ERROR_BAD_OUT_TYPE                );
+    if(tree_errors.bit_mask & TREE_ERROR_ELEMENT_DOES_NOT_SET   ) printf("\t\t"), PrintError(TREE_ERROR_ELEMENT_DOES_NOT_SET        );
+    if(tree_errors.bit_mask & TREE_ERROR_MAKENODE_NOT_ALLOC_MEM ) printf("\t\t"), PrintError(TREE_ERROR_MAKENODE_NOT_ALLOC_MEM      );
+    if(tree_errors.bit_mask & TREE_ERROR_MAKENODE_BAD_STATUS    ) printf("\t\t"), PrintError(TREE_ERROR_MAKENODE_BAD_STATUS         );
+    if(tree_errors.bit_mask & TREE_ERROR_INCORRECT_TREE_SIZE    ) printf("\t\t"), PrintError(TREE_ERROR_INCORRECT_TREE_SIZE         );
+    if(tree_errors.bit_mask & TREE_ERROR_TREECTOR_NOT_ALLOC_MEM ) printf("\t\t"), PrintError(TREE_ERROR_TREECTOR_NOT_ALLOC_MEM      );
+    
     printf("\t}\n");
 
     _TreeDumpOutNodes(tree->nodes);
@@ -166,8 +233,21 @@ void TreeNodeDeleteBranch(TreeBin* tree, TreeNode* node){
 
 void TreeNodeDeleteVertex(TreeBin* tree, TreeNode* node){
     
-    assert(tree != NULL);
-    assert(node != NULL);
+    tree_assert(
+                    tree != NULL, 
+                    tree, 
+                    TREE_ERROR_BAD_BIN_POINTER,
+                    "Incorrect pointer to the tree!",
+                    VOID
+                );
+
+    tree_assert(
+                    node != NULL,
+                    tree,
+                    TREE_ERROR_BAD_NODE_POINTER,
+                    "Incorrect pointer to the node!",
+                    VOID
+                );
 
     if(node->father != NULL){
         if(node->father->left == node){
@@ -177,7 +257,13 @@ void TreeNodeDeleteVertex(TreeBin* tree, TreeNode* node){
             node->father->right = NULL;
         }
         else
-            assert(false);
+            tree_assert(
+                            false,
+                            tree,
+                            TREE_ERROR_CODE_IS_CORRUPTED,
+                            "The executable file code is corrupted, an impossible exception situation has occurred",
+                            VOID
+                        );
     }
 
     tree->ContainerDtor(node->container);
@@ -185,26 +271,52 @@ void TreeNodeDeleteVertex(TreeBin* tree, TreeNode* node){
     *node = NULLNODE;
 
     free(node);
-    assert(tree->number_of_nodes > 0);
+
+    tree_assert(
+                    tree->number_of_nodes > ZERO_ELEMENTS,
+                    tree,
+                    TREE_ERROR_INCORRECT_TREE_SIZE,
+                    "Deleting an element contradicts the number of elements in the tree (it is empty)!",
+                    VOID
+                );
+
     tree->number_of_nodes--;
 
     if(tree->number_of_nodes == ZERO_ELEMENTS)
         tree->nodes = NULL;
-
 }
 
 TreeNode* TreeNodeMake(
-                        TreeBin*            tree    , 
-                        TreeNode*           father  , 
-                        const void*         element , 
-                        const TREE_NODE_STATUS   status
+                        TreeBin*    tree    , 
+                        TreeNode*   father  , 
+                        const void* element , 
+                        const TREE_NODE_STATUS status
                     )
 {
-    assert(tree != NULL);
-    assert(element != NULL);
+    tree_assert(
+                    tree != NULL, 
+                    tree, 
+                    TREE_ERROR_BAD_BIN_POINTER,
+                    "Incorrect pointer to the tree!",
+                    NON_VOID
+                );
+    tree_assert(
+                    element != NULL, 
+                    tree, 
+                    TREE_ERROR_ELEMENT_NOT_EXIST, 
+                    "Incorrect pointer to element!",
+                    NON_VOID
+                );
 
     TreeNode* node = (TreeNode*)calloc(ONE_ELEMENT, sizeof(TreeNode));
-    assert(node != NULL);
+    
+    tree_assert(
+                    node != NULL, 
+                    tree,
+                    TREE_ERROR_MAKENODE_NOT_ALLOC_MEM,
+                    "Calloc failed to allocate memory!",
+                    NON_VOID
+                );
 
     *node = NULLNODE;
 
@@ -228,10 +340,13 @@ TreeNode* TreeNodeMake(
                 break;
             }
         default:
-            {
-                assert(false);
-                break;
-            }
+            tree_assert(
+                false,
+                tree,
+                TREE_ERROR_MAKENODE_BAD_STATUS,
+                "Incorrect information about the location of the branch!(not left, not right, not this)!",
+                NON_VOID
+            );
     }
     
     tree->number_of_nodes++;
@@ -242,12 +357,24 @@ TreeNode* TreeNodeMake(
 
 void TreeSetElement(TreeBin* tree, void* element){
 
-    assert(tree != NULL);
-    assert(element != NULL);
+    tree_assert(
+                    tree != NULL, 
+                    tree, 
+                    TREE_ERROR_BAD_BIN_POINTER,
+                    "Incorrect pointer to the tree!",
+                    VOID
+                );
+    tree_assert(
+                    element != NULL, 
+                    tree, 
+                    TREE_ERROR_ELEMENT_NOT_EXIST, 
+                    "Incorrect pointer to element!",
+                    VOID
+                );
 
     int compare_status = 0;
-    TreeNode* father = NULL;
-    TreeNode* node = tree->nodes;
+    TreeNode* father    = NULL;
+    TreeNode* node      = tree->nodes;
 
     do{
         if(node == NULL){
@@ -274,20 +401,40 @@ void TreeSetElement(TreeBin* tree, void* element){
                     break;
                 }
             default:
-                assert(false);
+                tree_assert(
+                                false,
+                                tree,
+                                TREE_ERROR_COMP_ERROR_VALUE,
+                                "The comparator returned an incorrect value. \nThe comparator should return values in {-1, 0, 1}",
+                                VOID
+                            );
         }
     }while(compare_status);
 
-    assert(false);
+    tree_assert(
+                    false,
+                    tree,
+                    TREE_ERROR_ELEMENT_DOES_NOT_SET,
+                    "Incorrect behavior of the TreeSetElement function!",
+                    VOID
+
+    );
 }
 
-void TreeOut(const TreeBin* tree, TREE_OUT_TYPE out_type){
-    assert(tree != NULL);
-    printf("TREE:%p\n", tree);
+void TreeOut(TreeBin* tree, TREE_OUT_TYPE out_type){
+
+    tree_assert(
+                    tree != NULL, 
+                    tree, 
+                    TREE_ERROR_BAD_BIN_POINTER,
+                    "Incorrect pointer to the tree!",
+                    VOID
+                );
+
     TreeBranchOut(tree, tree->nodes, out_type);
 }
 
-void TreeBranchOut(const TreeBin* tree, const TreeNode* node, TREE_OUT_TYPE out_type){
+void TreeBranchOut(TreeBin* tree, const TreeNode* node, TREE_OUT_TYPE out_type){
     if(node != NULL){
         switch (out_type)
         {
@@ -304,12 +451,19 @@ void TreeBranchOut(const TreeBin* tree, const TreeNode* node, TREE_OUT_TYPE out_
             break;
         }
         default:
-            assert(false);
+            tree_assert(
+                            false,
+                            tree,
+                            TREE_ERROR_BAD_OUT_TYPE,
+                            "You must chose one of TREE_OUT_TYPE!",
+                            VOID
+                        );
         }
 
     }
 }
 
+#warning Улчшить внешний вид немного
 void TreeNodePairOut(const TreeNode* node){
     putchar('\n');
     if(node != NULL && node->left != NULL){
@@ -362,8 +516,20 @@ void TreeNodePairOut(const TreeNode* node){
 
 TreeNode* TreeNodeFindElement(TreeBin* tree, const void* element){
 
-    assert(tree != NULL);
-    assert(element != NULL);
+    tree_assert(
+                    tree != NULL, 
+                    tree, 
+                    TREE_ERROR_BAD_BIN_POINTER,
+                    "Incorrect pointer to the tree!",
+                    NON_VOID
+                );
+    tree_assert(
+                    element != NULL, 
+                    tree, 
+                    TREE_ERROR_ELEMENT_NOT_EXIST, 
+                    "Incorrect pointer to element!",
+                    NON_VOID
+                );
 
     int compare_status = 0;
 
@@ -392,15 +558,22 @@ TreeNode* TreeNodeFindElement(TreeBin* tree, const void* element){
                     break;
                 }
             default:
-                assert(false);
+                tree_assert(
+                                false,
+                                tree,
+                                TREE_ERROR_COMP_ERROR_VALUE,
+                                "The comparator returned an incorrect value. \nThe comparator should return values in {-1, 0, 1}",
+                                NON_VOID
+                            );
         }
     }while(compare_status);
+
     return NULL;
 }
 
 TreeNode* TreeNodeGetMin(TreeNode* node){
-
-    assert(node != NULL);
+    if(node == NULL)
+        return NULL;
 
     while(node->left != NULL)
         node = node->left;
@@ -410,16 +583,33 @@ TreeNode* TreeNodeGetMin(TreeNode* node){
 
 void TreeDelElement(TreeBin* tree, void* element){
 
-    assert(tree != NULL);
-    assert(element != NULL);
-
-    #warning add_not_exists element
+    tree_assert(
+                    tree != NULL, 
+                    tree, 
+                    TREE_ERROR_BAD_BIN_POINTER,
+                    "Incorrect pointer to the tree!",
+                    VOID
+                );
+    tree_assert(
+                    element != NULL, 
+                    tree, 
+                    TREE_ERROR_ELEMENT_NOT_EXIST, 
+                    "Incorrect pointer to element!",
+                    VOID
+                );
 
     TreeNode* node_element = TreeNodeFindElement(tree, element);
 
     TreeNode* node = tree->nodes;
 
-    assert(node_element != NULL);
+    tree_assert(
+                    node_element != NULL, 
+                    tree, 
+                    TREE_ERROR_ELEMENT_NOT_EXIST, 
+                    "The item to delete does not exist in the tree!", 
+                    VOID
+                );
+
     if(node_element->left == NULL && node_element->right == NULL){
         
         TreeNodeDeleteVertex(tree, node_element);
@@ -432,13 +622,34 @@ void TreeDelElement(TreeBin* tree, void* element){
         )
             node_replacement = (node_element->left == NULL) ?   node_element->right 
                                                             :   node_element->left;
-        else if(node_element->left != NULL && node_element->right != NULL)
+        else if(node_element->left != NULL && node_element->right != NULL){
             node_replacement = TreeNodeGetMin(node->right);
+            tree_assert(
+                            node_replacement != NULL, 
+                            tree, 
+                            TREE_ERROR_ELEMENT_NOT_EXIST,
+                            "The minimum element was not found!",
+                            VOID
+                        );
+        }
         else
-            assert(false);
+            tree_assert(
+                            false,
+                            tree,
+                            TREE_ERROR_CODE_IS_CORRUPTED,
+                            "The executable file code is corrupted, an impossible exception situation has occurred",
+                            VOID
+                        );
             
         if(node_replacement->left != NULL || node_replacement->right != NULL){
             void* new_value = tree->ContainerCtor(node_replacement->container);
+            tree_assert(
+                            new_value != NULL,
+                            tree,
+                            TREE_ERROR_CTOR_NOT_ALLOC_MEM,
+                            "An error occurred in the constructor, a null pointer was returned",
+                            VOID
+                        );
             TreeDelElement(tree, node_replacement->container);
             tree->ContainerCopy(node_element->container, new_value);
             tree->ContainerDtor(new_value);

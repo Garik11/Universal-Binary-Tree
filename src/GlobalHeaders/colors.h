@@ -14,7 +14,7 @@
 #define SETLIGHTCOLOR(code)         "\033[1;3"  code "m"
 #define SETBACKGROUNDCOLOR(code)    "\033[4"    code "m"
 
-#define CLOSECOLOR()            "\033[39m"
+#define CLOSECOLOR()            "\033[0;39m"
 #define CLOSEBACKGROUNDCOLOR()  "\033[49m"
 
 #define WRITECOLOR(code, ...)                     SETCOLOR(code) __VA_ARGS__ CLOSECOLOR()

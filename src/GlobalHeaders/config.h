@@ -6,7 +6,7 @@
 #define DEBUG
 
 const char AUTOR_NAME   [] = "KXI";
-const char VERSION      [] = "0.1";
+const char VERSION      [] = "0.3";
 
 #ifdef DEBUG
     #define ON_DEBUG(...) __VA_ARGS__

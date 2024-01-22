@@ -98,12 +98,12 @@ TreeBin* _TreeCtor(
 
 void TreeDtor(TreeBin* tree) {
 
-    TreeErrors tree_errors = TreeVerificator(tree);
+    TreeErrors err = TreeVerificator(tree);
 
     tree_assert(
-                    tree_errors.bit_mask == TREE_ALL_OK,
+                    err.bit_mask == TREE_ALL_OK,
                     tree,
-                    tree_errors.bit_mask,
+                    err.bit_mask,
                     "Critical error in the tree structure!",
                     VOID
     );
@@ -252,12 +252,12 @@ void TreeNodeDeleteVertex(
                         )
 {
     
-    TreeErrors tree_errors = TreeVerificator(tree);
+    TreeErrors err = TreeVerificator(tree);
 
     tree_assert(
-                    tree_errors.bit_mask == TREE_ALL_OK,
+                    err.bit_mask == TREE_ALL_OK,
                     tree,
-                    tree_errors.bit_mask,
+                    err.bit_mask,
                     "Critical error in the tree structure!",
                     VOID
     );
@@ -313,14 +313,14 @@ TreeNode* TreeNodeMake(
                     )
 {
 
-    TreeErrors tree_errors = TreeVerificator(tree);
+    TreeErrors err = TreeVerificator(tree);
 
     tree_assert(
-                    tree_errors.bit_mask == TREE_ALL_OK,
+                    err.bit_mask == TREE_ALL_OK,
                     tree,
-                    tree_errors.bit_mask,
+                    err.bit_mask,
                     "Critical error in the tree structure!",
-                    VOID
+                    NON_VOID
     );
 
     tree_assert(
@@ -384,12 +384,12 @@ void TreeSetElement(
                     )
 {
 
-    TreeErrors tree_errors = TreeVerificator(tree);
+    TreeErrors err = TreeVerificator(tree);
 
     tree_assert(
-                    tree_errors.bit_mask == TREE_ALL_OK,
+                    err.bit_mask == TREE_ALL_OK,
                     tree,
-                    tree_errors.bit_mask,
+                    err.bit_mask,
                     "Critical error in the tree structure!",
                     VOID
     );
@@ -458,12 +458,12 @@ void TreeOut(
             )
 {
 
-    TreeErrors tree_errors = TreeVerificator(tree);
+    TreeErrors err = TreeVerificator(tree);
 
     tree_assert(
-                    tree_errors.bit_mask == TREE_ALL_OK,
+                    err.bit_mask == TREE_ALL_OK,
                     tree,
-                    tree_errors.bit_mask,
+                    err.bit_mask,
                     "Critical error in the tree structure!",
                     VOID
     );
@@ -562,14 +562,14 @@ TreeNode* TreeNodeFindElement(
                             )
 {
 
-    TreeErrors tree_errors = TreeVerificator(tree);
+    TreeErrors err = TreeVerificator(tree);
 
     tree_assert(
-                    tree_errors.bit_mask == TREE_ALL_OK,
+                    err.bit_mask == TREE_ALL_OK,
                     tree,
-                    tree_errors.bit_mask,
+                    err.bit_mask,
                     "Critical error in the tree structure!",
-                    VOID
+                    NON_VOID
     );
 
     tree_assert(
@@ -636,12 +636,12 @@ void TreeDelElement(
                     )
 {
 
-    TreeErrors tree_errors = TreeVerificator(tree);
+    TreeErrors err = TreeVerificator(tree);
 
     tree_assert(
-                    tree_errors.bit_mask == TREE_ALL_OK,
+                    err.bit_mask == TREE_ALL_OK,
                     tree,
-                    tree_errors.bit_mask,
+                    err.bit_mask,
                     "Critical error in the tree structure!",
                     VOID
     );

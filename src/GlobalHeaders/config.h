@@ -4,6 +4,7 @@
 /*Debugging status, affects the behavior of the asserts
 If enabled, the assertions cause a dump and exit the program
 If disabled, the assertions exit the function saving errors*/
+
 #define DEBUG
 
 /*The author's pseudonym
@@ -17,7 +18,7 @@ const char VERSION      [] = "0.4";
 /*Used for debugging*/
 #ifdef DEBUG
     #define ON_DEBUG(...) __VA_ARGS__
-#elif 
+#else 
     #define ON_DEBUG(...) //ignone all ON_DEBUG
 #endif
 

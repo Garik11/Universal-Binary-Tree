@@ -36,7 +36,6 @@ int main(void) {
                                 containerComp,
                                 containerPrint
                             );
-
     /*A simple example of filling a tree*/                        
     for(size_t i = 0; i < 10; i++){
         /*Example of a container*/

@@ -14,59 +14,52 @@ TreeBin* _TreeCtor(
 {
 
     tree_assert(
-                    ContainerCtor    != NULL,
+                    ContainerCtor != NULL,
                     ((TreeBin*)NULL),
                     TREE_ERROR_BAD_CTOR_POINTER,
-                    "Invalid pointer to the ContainerCtor function!",
-                    NON_VOID
+                    "Invalid pointer to the ContainerCtor function!"
     );
 
     tree_assert(
-                    ContainerDtor    != NULL,
+                    ContainerDtor != NULL,
                     ((TreeBin*)NULL),
                     TREE_ERROR_BAD_DTOR_POINTER,
-                    "Invalid pointer to the ContainerDtor function!",
-                    NON_VOID
+                    "Invalid pointer to the ContainerDtor function!"
     );
 
     tree_assert(
-                    ContainerCopy    != NULL,
+                    ContainerCopy != NULL,
                     ((TreeBin*)NULL),
                     TREE_ERROR_BAD_COPY_POINTER,
-                    "Invalid pointer to the ContainerCopy function!",
-                    NON_VOID
+                    "Invalid pointer to the ContainerCopy function!"
     );
 
     tree_assert(
-                    ContainerComp    != NULL,
+                    ContainerComp != NULL,
                     ((TreeBin*)NULL),
                     TREE_ERROR_BAD_COMP_POINTER,
-                    "Invalid pointer to the ContainerComp function!",
-                    NON_VOID
+                    "Invalid pointer to the ContainerComp function!"
     );
 
     tree_assert(
-                    ContainerPaint  != NULL,
+                    ContainerPaint != NULL,
                     ((TreeBin*)NULL),
                     TREE_ERROR_BAD_PRIN_POINTER,
-                    "Invalid pointer to the ContainerPaint function!",
-                    NON_VOID
+                    "Invalid pointer to the ContainerPaint function!"
     );
 
     tree_assert(
-                    creation_file_name  != NULL,
+                    creation_file_name != NULL,
                     ((TreeBin*)NULL),
                     TREE_ERROR_BAD_CRFI_POINTER,
-                    "Invalid pointer to the creation_file_name!",
-                    NON_VOID
+                    "Invalid pointer to the creation_file_name!"
     );
 
     tree_assert(
-                    creation_func_name  != NULL,
+                    creation_func_name != NULL,
                     ((TreeBin*)NULL),
                     TREE_ERROR_BAD_CRFU_POINTER,
-                    "Invalid pointer to the creation_func_name!",
-                    NON_VOID
+                    "Invalid pointer to the creation_func_name!"
     );
 
     TreeBin* tree = (TreeBin*)calloc(ONE_ELEMENT, sizeof(TreeBin));
@@ -75,8 +68,14 @@ TreeBin* _TreeCtor(
                     tree != NULL,
                     tree,
                     TREE_ERROR_TREECTOR_NOT_ALLOC_MEM,
-                    "Calloc failed to allocate memory!",
-                    NON_VOID
+                    "Calloc failed to allocate memory!"
+    );
+    
+    tree_checking_error(
+                            tree != NULL,
+                            tree,
+                            TREE_ERROR_TREECTOR_NOT_ALLOC_MEM,
+                            NON_VOID
     );
 
     tree->number_of_nodes = 0;
@@ -98,23 +97,19 @@ TreeBin* _TreeCtor(
 
 void TreeDtor(TreeBin* tree) {
 
-    TreeErrors err = TreeVerificator(tree);
-
     tree_assert(
-                    err.bit_mask == TREE_ALL_OK,
+                    TreeVerificator(tree).bit_mask == TREE_ALL_OK,
                     tree,
-                    err.bit_mask,
-                    "Critical error in the tree structure!",
-                    VOID
+                    TreeVerificator(tree).bit_mask,
+                    "Critical error in the tree structure!"
     );
 
     tree_assert(
                     tree != NULL, 
                     tree, 
                     TREE_ERROR_BAD_BIN_POINTER,
-                    "Incorrect pointer to the tree!",
-                    VOID
-                );
+                    "Incorrect pointer to the tree!"
+    );
 
     TreeNodeDeleteBranch(tree, tree->nodes);
 
@@ -126,7 +121,7 @@ TreeErrors TreeVerificator(const TreeBin* tree) {
     if(tree == NULL)
         return {TREE_ERROR_BAD_BIN_POINTER};
 
-    TreeErrors output = tree->error_status;
+    TreeErrors output = {TREE_ALL_OK};
 
     if(tree->ContainerComp == NULL)
         output.bit_mask |= TREE_ERROR_BAD_COMP_POINTER;
@@ -142,6 +137,7 @@ TreeErrors TreeVerificator(const TreeBin* tree) {
         output.bit_mask |= TREE_ERROR_BAD_CRFI_POINTER;
     if(tree->CREATION_FUNC == NULL)
         output.bit_mask |= TREE_ERROR_BAD_CRFU_POINTER;
+
     return output;
 }
 
@@ -239,6 +235,14 @@ void TreeNodeDeleteBranch(
                             TreeNode* node
                         )
 {
+
+    tree_assert(
+                    TreeVerificator(tree).bit_mask == TREE_ALL_OK,
+                    tree,
+                    TreeVerificator(tree).bit_mask,
+                    "Critical error in the tree structure!"
+    );
+
     if(node != NULL) {
         TreeNodeDeleteBranch(tree, node->left);
         TreeNodeDeleteBranch(tree, node->right);
@@ -251,24 +255,20 @@ void TreeNodeDeleteVertex(
                             TreeNode* node
                         )
 {
-    
-    TreeErrors err = TreeVerificator(tree);
 
     tree_assert(
-                    err.bit_mask == TREE_ALL_OK,
+                    TreeVerificator(tree).bit_mask == TREE_ALL_OK,
                     tree,
-                    err.bit_mask,
-                    "Critical error in the tree structure!",
-                    VOID
+                    TreeVerificator(tree).bit_mask,
+                    "Critical error in the tree structure!"
     );
 
     tree_assert(
                     node != NULL,
                     tree,
                     TREE_ERROR_BAD_NODE_POINTER,
-                    "Incorrect pointer to the node!",
-                    VOID
-                );
+                    "Incorrect pointer to the node!"
+    );
 
     if(node->father != NULL) {
         if(node->father->left == node)
@@ -280,8 +280,7 @@ void TreeNodeDeleteVertex(
                             false,
                             tree,
                             TREE_ERROR_CODE_IS_CORRUPTED,
-                            "The executable file code is corrupted, an impossible exception situation has occurred",
-                            VOID
+                            "The executable file code is corrupted, an impossible exception situation has occurred"
                         );
     }
 
@@ -295,8 +294,7 @@ void TreeNodeDeleteVertex(
                     tree->number_of_nodes > ZERO_ELEMENTS,
                     tree,
                     TREE_ERROR_INCORRECT_TREE_SIZE,
-                    "Deleting an element contradicts the number of elements in the tree (it is empty)!",
-                    VOID
+                    "Deleting an element contradicts the number of elements in the tree (it is empty)!"
                 );
 
     tree->number_of_nodes--;
@@ -313,23 +311,19 @@ TreeNode* TreeNodeMake(
                     )
 {
 
-    TreeErrors err = TreeVerificator(tree);
-
     tree_assert(
-                    err.bit_mask == TREE_ALL_OK,
+                    TreeVerificator(tree).bit_mask == TREE_ALL_OK,
                     tree,
-                    err.bit_mask,
-                    "Critical error in the tree structure!",
-                    NON_VOID
+                    TreeVerificator(tree).bit_mask,
+                    "Critical error in the tree structure!"
     );
 
     tree_assert(
                     element != NULL, 
                     tree, 
                     TREE_ERROR_ELEMENT_NOT_EXIST, 
-                    "Incorrect pointer to element!",
-                    NON_VOID
-                );
+                    "Incorrect pointer to element!"
+    );
 
     TreeNode* node = (TreeNode*)calloc(ONE_ELEMENT, sizeof(TreeNode));
     
@@ -337,9 +331,15 @@ TreeNode* TreeNodeMake(
                     node != NULL, 
                     tree,
                     TREE_ERROR_MAKENODE_NOT_ALLOC_MEM,
-                    "Calloc failed to allocate memory!",
-                    NON_VOID
-                );
+                    "Calloc failed to allocate memory!"
+    );
+
+    tree_checking_error(
+                            node != NULL, 
+                            tree,
+                            TREE_ERROR_MAKENODE_NOT_ALLOC_MEM,
+                            NON_VOID
+    );
 
     *node = NULLNODE;
 
@@ -364,11 +364,10 @@ TreeNode* TreeNodeMake(
             }
         default:
             tree_assert(
-                false,
-                tree,
-                TREE_ERROR_MAKENODE_BAD_STATUS,
-                "Incorrect information about the location of the branch!(not left, not right, not this)!",
-                NON_VOID
+                            false,
+                            tree,
+                            TREE_ERROR_MAKENODE_BAD_STATUS,
+                            "Incorrect information about the location of the branch!(not left, not right, not this)!"
             );
     }
     
@@ -384,23 +383,26 @@ void TreeSetElement(
                     )
 {
 
-    TreeErrors err = TreeVerificator(tree);
-
     tree_assert(
-                    err.bit_mask == TREE_ALL_OK,
+                    TreeVerificator(tree).bit_mask == TREE_ALL_OK,
                     tree,
-                    err.bit_mask,
-                    "Critical error in the tree structure!",
-                    VOID
+                    TreeVerificator(tree).bit_mask,
+                    "Critical error in the tree structure!"
     );
 
     tree_assert(
                     element != NULL, 
                     tree, 
                     TREE_ERROR_ELEMENT_NOT_EXIST, 
-                    "Incorrect pointer to element!",
-                    VOID
-                );
+                    "Incorrect pointer to element!"
+    );
+
+    tree_checking_error(
+                            element != NULL, 
+                            tree, 
+                            TREE_ERROR_ELEMENT_NOT_EXIST, 
+                            VOID
+    );
 
     int compare_status = 0;
 
@@ -436,8 +438,7 @@ void TreeSetElement(
                                 false,
                                 tree,
                                 TREE_ERROR_COMP_ERROR_VALUE,
-                                "The comparator returned an incorrect value. \nThe comparator should return values in {-1, 0, 1}",
-                                VOID
+                                "The comparator returned an incorrect value. \nThe comparator should return values in {-1, 0, 1}"
                             );
         }
     } while(compare_status);
@@ -446,10 +447,9 @@ void TreeSetElement(
                     false,
                     tree,
                     TREE_ERROR_ELEMENT_DOES_NOT_SET,
-                    "Incorrect behavior of the TreeSetElement function!",
-                    VOID
-
+                    "Incorrect behavior of the TreeSetElement function!"
     );
+
 }
 
 void TreeOut(
@@ -458,16 +458,15 @@ void TreeOut(
             )
 {
 
-    TreeErrors err = TreeVerificator(tree);
-
     tree_assert(
-                    err.bit_mask == TREE_ALL_OK,
+                    TreeVerificator(tree).bit_mask == TREE_ALL_OK,
                     tree,
-                    err.bit_mask,
-                    "Critical error in the tree structure!",
-                    VOID
+                    TreeVerificator(tree).bit_mask,
+                    "Critical error in the tree structure!"
     );
 
+    /*I don't know yet why this function is needed, 
+    but maybe it will make sense later*/
     TreeBranchOut(tree, tree->nodes, out_type);
 }
 
@@ -477,6 +476,13 @@ void TreeBranchOut(
                         TREE_OUT_TYPE out_type
                     )
 {
+    tree_assert(
+                    TreeVerificator(tree).bit_mask == TREE_ALL_OK,
+                    tree,
+                    TreeVerificator(tree).bit_mask,
+                    "Critical error in the tree structure!"
+    );
+
     if(node != NULL) {
         switch (out_type) {
             case TREE_NORMAL_OUT:
@@ -498,15 +504,21 @@ void TreeBranchOut(
                                 false,
                                 tree,
                                 TREE_ERROR_BAD_OUT_TYPE,
-                                "You must chose one of TREE_OUT_TYPE!",
-                                VOID
-                            );
+                                "You must chose one of TREE_OUT_TYPE!"
+                );
         }
-
     }
 }
 
 void TreeNodePairOut(const TreeNode* node) {
+
+    tree_assert(
+                    node != NULL,
+                    (TreeBin*)NULL,
+                    TREE_ERROR_BAD_NODE_POINTER,
+                    "Null pointer to node!"
+    );
+
     putchar('\n');
     if(node != NULL && node->left != NULL) {
         printf(
@@ -562,23 +574,27 @@ TreeNode* TreeNodeFindElement(
                             )
 {
 
-    TreeErrors err = TreeVerificator(tree);
-
     tree_assert(
-                    err.bit_mask == TREE_ALL_OK,
+                    TreeVerificator(tree).bit_mask == TREE_ALL_OK,
                     tree,
-                    err.bit_mask,
-                    "Critical error in the tree structure!",
-                    NON_VOID
+                    TreeVerificator(tree).bit_mask,
+                    "Critical error in the tree structure!"
     );
 
     tree_assert(
                     element != NULL, 
                     tree, 
                     TREE_ERROR_ELEMENT_NOT_EXIST, 
-                    "Incorrect pointer to element!",
-                    NON_VOID
+                    "Incorrect pointer to element!"
                 );
+
+    /*If the pointer is null, 
+    then the element is obviously not found 
+    (at the same time,  
+    this behavior is an error from the point of view of the debug.
+    Yes, I wanted it that way)*/
+    if(element == NULL)
+        return NULL;
 
     int compare_status = 0;
 
@@ -611,8 +627,7 @@ TreeNode* TreeNodeFindElement(
                                 false,
                                 tree,
                                 TREE_ERROR_COMP_ERROR_VALUE,
-                                "The comparator returned an incorrect value. \nThe comparator should return values in {-1, 0, 1}",
-                                NON_VOID
+                                "The comparator returned an incorrect value. \nThe comparator should return values in {-1, 0, 1}"
                             );
         }
     } while(compare_status);
@@ -636,66 +651,68 @@ void TreeDelElement(
                     )
 {
 
-    TreeErrors err = TreeVerificator(tree);
-
     tree_assert(
-                    err.bit_mask == TREE_ALL_OK,
+                    TreeVerificator(tree).bit_mask == TREE_ALL_OK,
                     tree,
-                    err.bit_mask,
-                    "Critical error in the tree structure!",
-                    VOID
+                    TreeVerificator(tree).bit_mask,
+                    "Critical error in the tree structure!"
     );
 
     tree_assert(
                     element != NULL, 
                     tree, 
                     TREE_ERROR_ELEMENT_NOT_EXIST, 
-                    "Incorrect pointer to element!",
-                    VOID
+                    "Incorrect pointer to element!"
                 );
+
+    tree_checking_error(
+                            element != NULL, 
+                            tree, 
+                            TREE_ERROR_ELEMENT_NOT_EXIST, 
+                            VOID
+    );
 
     TreeNode* node_element = TreeNodeFindElement(tree, element);
 
+    tree_checking_error(
+                            node_element != NULL, 
+                            tree, 
+                            TREE_ERROR_ELEMENT_NOT_FOUND, 
+                            VOID
+    );
+
     TreeNode* node = tree->nodes;
 
-    tree_assert(
-                    node_element != NULL, 
-                    tree, 
-                    TREE_ERROR_ELEMENT_NOT_EXIST, 
-                    "The item to delete does not exist in the tree!", 
-                    VOID
-                );
-
     if(node_element->left == NULL && node_element->right == NULL) {
-        
         TreeNodeDeleteVertex(tree, node_element);
     }
     else {
         TreeNode* node_replacement = NULL;
-        if  (
+        if (
                 (node_element->left == NULL && node_element->right != NULL) ||
                 (node_element->left != NULL && node_element->right == NULL)
-        )
+            )
+        {
             node_replacement = (node_element->left == NULL) ?   node_element->right 
                                                             :   node_element->left;
-        else if(node_element->left != NULL && node_element->right != NULL){
+        }
+        else if(node_element->left != NULL && node_element->right != NULL) {
             node_replacement = TreeNodeGetMin(node->right);
             tree_assert(
                             node_replacement != NULL, 
                             tree, 
                             TREE_ERROR_ELEMENT_NOT_EXIST,
-                            "The minimum element was not found!",
-                            VOID
+                            "The minimum element was not found!"
                         );
         }
-        else
+        else {
             tree_assert(
                             false,
                             tree,
                             TREE_ERROR_CODE_IS_CORRUPTED,
-                            "The executable file code is corrupted, an impossible exception situation has occurred",
-                            VOID
+                            "The executable file code is corrupted, an impossible exception situation has occurred"
                         );
+        }
             
         if(node_replacement->left != NULL || node_replacement->right != NULL) {
             void* new_value = tree->ContainerCtor(node_replacement->container);
@@ -703,9 +720,14 @@ void TreeDelElement(
                             new_value != NULL,
                             tree,
                             TREE_ERROR_CTOR_NOT_ALLOC_MEM,
-                            "An error occurred in the constructor, a null pointer was returned",
-                            VOID
+                            "An error occurred in the constructor, a null pointer was returned"
                         );
+            tree_checking_error(
+                                    new_value != NULL,
+                                    tree,
+                                    TREE_ERROR_CTOR_NOT_ALLOC_MEM,
+                                    VOID
+            );
             TreeDelElement(tree, node_replacement->container);
             tree->ContainerCopy(node_element->container, new_value);
             tree->ContainerDtor(new_value);
@@ -715,4 +737,4 @@ void TreeDelElement(
             TreeNodeDeleteVertex(tree, node_replacement);
         }
     }
-}  
+}

@@ -56,47 +56,54 @@ enum TYPE_OF_FUNCTION{
     return NULL
 
 /*Special assert for debugging, conveniently shows errors
-If the debug mode, it displays the dump and exits the program, 
-if it is normal, it saves the error to the structure and exits the function.
-*/
-#define tree_assert(condition, tree, error_code, title, STATUS)                     \
-    do{                                                                             \
-        if(!(condition)){                                                           \
-            ON_DEBUG(                                                               \
-                printf(                                                             \
-                        WRITEBACKGROUNDCOLOR(RED, "FATAL_ERROR:")                   \
-                        " "                                                         \
-                        WRITELIGHTCOLOR(YELLOW, "%s")                               \
-                        " "                                                         \
-                        WRITECOLOR(PURPLE, "in %s(%d) \n\tin %s")                   \
-                        ", "                                                        \
-                        WRITELIGHTCOLOR(BLACK, "%s")                                \
-                        " was not met!\n",                                          \
-                        #error_code,                                                \
-                        __FILE__,                                                   \
-                        __LINE__,                                                   \
-                        __PRETTY_FUNCTION__,                                        \
-                        #condition                                                  \
-                        );                                                          \
-                printf(                                                             \
-                        WRITELIGHTCOLOR(RED, "ERROR_TEXT:")                         \
-                        " "                                                         \
-                        WRITELIGHTCOLOR(GREEN, "%s\n"),                             \
-                        title                                                       \
-                    );                                                              \
-                TreeDump(tree, {error_code});                                       \
-                abort();                                                            \
-            )                                                                       \
-            TreeErrors tree_errors = TreeVerificator(tree);                         \
-            if(!(tree_errors.bit_mask & TREE_ERROR_BAD_BIN_POINTER)){               \
-                tree->error_status = tree_errors;                                   \
-                tree->error_status.bit_mask |= error_code;                          \
-            }                                                                       \
-            FORCED_EXIT_FROM_##STATUS();                                            \
-        }                                                                           \
-    }                                                                               \
-    while(0)
+Assert, signals errors, works only in debug mode*/
+#define tree_assert(condition, tree, error_code, title)                 \
+    do {                                                                \
+        ON_DEBUG                                                        \
+            (                                                           \
+                if(!(condition)){                                       \
+                    printf(                                             \
+                            WRITEBACKGROUNDCOLOR(RED, "FATAL_ERROR:")   \
+                            " "                                         \
+                            WRITELIGHTCOLOR(YELLOW, "%s")               \
+                            " "                                         \
+                            WRITECOLOR(PURPLE, "in %s(%d) \n\tin %s")   \
+                            ", "                                        \
+                            WRITELIGHTCOLOR(BLACK, "%s")                \
+                            " was not met!\n",                          \
+                            #error_code,                                \
+                            __FILE__,                                   \
+                            __LINE__,                                   \
+                            __PRETTY_FUNCTION__,                        \
+                            #condition                                  \
+                            );                                          \
+                    printf(                                             \
+                            WRITELIGHTCOLOR(RED, "ERROR_TEXT:")         \
+                            " "                                         \
+                            WRITELIGHTCOLOR(GREEN, "%s\n"),             \
+                            title                                       \
+                        );                                              \
+                    TreeDump(tree, {error_code});                       \
+                    abort();                                            \
+                }                                                       \
+            )                                                           \
+        } while(0)
 
+/*Error checking, if a pointer to the tree exists, 
+an error is written to the tree, after which the exit occurs. 
+The output occurs depending on the type of function.*/
+#define tree_checking_error(condition, tree, error_code, STATUS)            \
+    do {                                                                    \
+        if(!(condition)){                                                   \
+            TreeErrors _tree_errors = TreeVerificator(tree);                \
+            if(!(_tree_errors.bit_mask & TREE_ERROR_BAD_BIN_POINTER)){      \
+                tree->error_status = _tree_errors;                          \
+                tree->error_status.bit_mask |= error_code;                  \
+            }                                                               \
+            FORCED_EXIT_FROM_##STATUS();                                    \
+        }                                                                   \
+    } while(0)              
+    
 /*For comparator
     0   - equal
     -1  - left
@@ -177,7 +184,9 @@ enum TREE_ERRORS_CODE{
     /*The program tries to delete a vertex of a tree in which the number of vertices is zero*/
     TREE_ERROR_INCORRECT_TREE_SIZE      = 1 << 19,
     /*The tree constructor could not allocate memory*/
-    TREE_ERROR_TREECTOR_NOT_ALLOC_MEM   =1 << 20
+    TREE_ERROR_TREECTOR_NOT_ALLOC_MEM   = 1 << 20,
+    /*The TreeNodeFindElement function did not find the specified element*/
+    TREE_ERROR_ELEMENT_NOT_FOUND        = 1 << 21,
 };
 
 /*Node Struct*/
@@ -262,10 +271,11 @@ void TreeDtor(TreeBin* tree);
 
 /*Checks for errors directly related to the tree 
 (such errors are considered critical).
-Other error codes occur during execution, 
-this function is not able to check them*/
+ATTENTION: This function does not pay attention to the existing errors in the tree. 
+That is, it does NOT take into account error_status*/
 TreeErrors TreeVerificator(const TreeBin* tree);
 
+#warning Can add buf
 /*Out All errors and all tree*/
 void _TreeDump(
                 const TreeBin* tree,

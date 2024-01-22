@@ -12,6 +12,8 @@ const char AUTOR_NAME   [] = "KXI";
 /*Program version*/
 const char VERSION      [] = "0.4";
 
+#warning Добавить файл вывода ошибок
+
 /*Used for debugging*/
 #ifdef DEBUG
     #define ON_DEBUG(...) __VA_ARGS__

@@ -260,7 +260,10 @@ TreeBin* _TreeCtor(
 /*Tree Dtor, Frees up memory and deletes all tree vertices*/
 void TreeDtor(TreeBin* tree);
 
-/*Check all errors and returns*/
+/*Checks for errors directly related to the tree 
+(such errors are considered critical).
+Other error codes occur during execution, 
+this function is not able to check them*/
 TreeErrors TreeVerificator(const TreeBin* tree);
 
 /*Out All errors and all tree*/

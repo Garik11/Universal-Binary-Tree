@@ -98,6 +98,16 @@ TreeBin* _TreeCtor(
 
 void TreeDtor(TreeBin* tree) {
 
+    TreeErrors tree_errors = TreeVerificator(tree);
+
+    tree_assert(
+                    tree_errors.bit_mask == TREE_ALL_OK,
+                    tree,
+                    tree_errors.bit_mask,
+                    "Critical error in the tree structure!",
+                    VOID
+    );
+
     tree_assert(
                     tree != NULL, 
                     tree, 
@@ -242,13 +252,15 @@ void TreeNodeDeleteVertex(
                         )
 {
     
+    TreeErrors tree_errors = TreeVerificator(tree);
+
     tree_assert(
-                    tree != NULL, 
-                    tree, 
-                    TREE_ERROR_BAD_BIN_POINTER,
-                    "Incorrect pointer to the tree!",
+                    tree_errors.bit_mask == TREE_ALL_OK,
+                    tree,
+                    tree_errors.bit_mask,
+                    "Critical error in the tree structure!",
                     VOID
-                );
+    );
 
     tree_assert(
                     node != NULL,
@@ -301,13 +313,15 @@ TreeNode* TreeNodeMake(
                     )
 {
 
+    TreeErrors tree_errors = TreeVerificator(tree);
+
     tree_assert(
-                    tree != NULL, 
-                    tree, 
-                    TREE_ERROR_BAD_BIN_POINTER,
-                    "Incorrect pointer to the tree!",
-                    NON_VOID
-                );
+                    tree_errors.bit_mask == TREE_ALL_OK,
+                    tree,
+                    tree_errors.bit_mask,
+                    "Critical error in the tree structure!",
+                    VOID
+    );
 
     tree_assert(
                     element != NULL, 
@@ -370,13 +384,15 @@ void TreeSetElement(
                     )
 {
 
+    TreeErrors tree_errors = TreeVerificator(tree);
+
     tree_assert(
-                    tree != NULL, 
-                    tree, 
-                    TREE_ERROR_BAD_BIN_POINTER,
-                    "Incorrect pointer to the tree!",
+                    tree_errors.bit_mask == TREE_ALL_OK,
+                    tree,
+                    tree_errors.bit_mask,
+                    "Critical error in the tree structure!",
                     VOID
-                );
+    );
 
     tree_assert(
                     element != NULL, 
@@ -442,13 +458,15 @@ void TreeOut(
             )
 {
 
+    TreeErrors tree_errors = TreeVerificator(tree);
+
     tree_assert(
-                    tree != NULL, 
-                    tree, 
-                    TREE_ERROR_BAD_BIN_POINTER,
-                    "Incorrect pointer to the tree!",
+                    tree_errors.bit_mask == TREE_ALL_OK,
+                    tree,
+                    tree_errors.bit_mask,
+                    "Critical error in the tree structure!",
                     VOID
-                );
+    );
 
     TreeBranchOut(tree, tree->nodes, out_type);
 }
@@ -544,13 +562,15 @@ TreeNode* TreeNodeFindElement(
                             )
 {
 
+    TreeErrors tree_errors = TreeVerificator(tree);
+
     tree_assert(
-                    tree != NULL, 
-                    tree, 
-                    TREE_ERROR_BAD_BIN_POINTER,
-                    "Incorrect pointer to the tree!",
-                    NON_VOID
-                );
+                    tree_errors.bit_mask == TREE_ALL_OK,
+                    tree,
+                    tree_errors.bit_mask,
+                    "Critical error in the tree structure!",
+                    VOID
+    );
 
     tree_assert(
                     element != NULL, 
@@ -616,13 +636,15 @@ void TreeDelElement(
                     )
 {
 
+    TreeErrors tree_errors = TreeVerificator(tree);
+
     tree_assert(
-                    tree != NULL, 
-                    tree, 
-                    TREE_ERROR_BAD_BIN_POINTER,
-                    "Incorrect pointer to the tree!",
+                    tree_errors.bit_mask == TREE_ALL_OK,
+                    tree,
+                    tree_errors.bit_mask,
+                    "Critical error in the tree structure!",
                     VOID
-                );
+    );
 
     tree_assert(
                     element != NULL, 

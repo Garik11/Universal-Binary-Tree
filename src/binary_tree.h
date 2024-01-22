@@ -39,18 +39,25 @@
 /*Error output, this design was made for ENUM*/
 #define PrintError(error_name) printf(#error_name "\n");
 
+/*Types of functions to determine the types of output 
+(it seems to me this is workaround)*/
 enum TYPE_OF_FUNCTION{
     VOID,
     NON_VOID
 };
 
-#define FORCED_EXIT_FROM_VOID() \
+/*Exiting a void type function*/
+#define FORCED_EXIT_FROM_VOID()     \
     return
 
+/*Exiting a pointer type function*/
 #define FORCED_EXIT_FROM_NON_VOID() \
     return NULL
 
-/*Special assert for debugging, conveniently shows errors*/
+/*Special assert for debugging, conveniently shows errors
+If the debug mode, it displays the dump and exits the program, 
+if it is normal, it saves the error to the structure and exits the function.
+*/
 #define tree_assert(condition, tree, error_code, title, STATUS)                     \
     do{                                                                             \
         if(!(condition)){                                                           \
@@ -95,20 +102,29 @@ enum TYPE_OF_FUNCTION{
     1   - right
 */
 enum TREE_NODE_STATUS{
+    /*equal*/
     TREE_THIS    =  0,
+    /*left son*/
     TREE_LEFT    = -1,
+    /*right son*/
     TREE_RIGHT   =  1
 };
 
+/*Convenient names*/
 enum{
+    /*There are no elements*/
     ZERO_ELEMENTS = 0,
+    /*First element*/
     FIRST_ELEMENT = 1,
+    /*One element*/
     ONE_ELEMENT   = 1  
 };
 
 /*Formatted out, will be include*/
 enum TREE_OUT_TYPE{
+    /*Output in ascending order*/
     TREE_NORMAL_OUT,
+    /*Output in descending order*/
     TREE_REVERSE_OUT
 };
 
@@ -255,6 +271,9 @@ void _TreeDump(
                 const int   line_numb,
                 const char* func_name 
             );
+/*Auxiliary function for DUMP, 
+to create a recursion to output tree vertices*/
+void _TreeDumpOutNodes(const TreeNode* node);
 
 /*Make New node, you should use TreeSetElement*/
 TreeNode* TreeNodeMake(
@@ -266,19 +285,34 @@ TreeNode* TreeNodeMake(
 
 
 /*Set or add tree element*/
-void TreeSetElement(TreeBin* tree, void* element);
+void TreeSetElement(
+                        TreeBin* tree, 
+                        const void* element
+                    );
 /*Delete element, must exists*/
-void TreeDelElement(TreeBin* tree, void* element);
+void TreeDelElement(
+                        TreeBin* tree, 
+                        const void* element
+                    );
 /*Checks if the element exists
 If so, returns a pointer to it
 If not, it returns NULL*/
-TreeNode* TreeNodeFindElement(TreeBin* tree, const void* element);
+TreeNode* TreeNodeFindElement(
+                                TreeBin* tree, 
+                                const void* element
+                            );
 
 /*Auxiliary recursive function, deletes the entire branch, 
 calls the TreeNodeDeleteVertex function in the process*/
-void TreeNodeDeleteBranch(TreeBin* tree, TreeNode* node);
+void TreeNodeDeleteBranch(
+                            TreeBin* tree, 
+                            TreeNode* node
+                        );
 /*Deletes one vertex*/
-void TreeNodeDeleteVertex(TreeBin* tree, TreeNode* node);
+void TreeNodeDeleteVertex(
+                            TreeBin* tree, 
+                            TreeNode* node
+                        );
 
 /*Outputs the entire tree, 
 in the process calls the user's ContainerPaint function

@@ -1,7 +1,5 @@
 #include "binary_tree.h"
 
-static void _TreeDumpOutNodes(const TreeNode* node);
-
 TreeBin* _TreeCtor(
                     void*   (*ContainerCtor)       (const void* container),
                     void    (*ContainerDtor)       (void* container),
@@ -12,7 +10,8 @@ TreeBin* _TreeCtor(
                     const char* creation_file_name,
                     const char* creation_func_name,
                     const int   creation_line_numb    
-){
+                )
+{
 
     tree_assert(
                     ContainerCtor    != NULL,
@@ -97,7 +96,7 @@ TreeBin* _TreeCtor(
     return tree;
 }
 
-void TreeDtor(TreeBin* tree){
+void TreeDtor(TreeBin* tree) {
 
     tree_assert(
                     tree != NULL, 
@@ -112,7 +111,7 @@ void TreeDtor(TreeBin* tree){
     free(tree);
 }
 
-TreeErrors TreeVerificator(const TreeBin* tree){
+TreeErrors TreeVerificator(const TreeBin* tree) {
 
     if(tree == NULL)
         return {TREE_ERROR_BAD_BIN_POINTER};
@@ -136,7 +135,7 @@ TreeErrors TreeVerificator(const TreeBin* tree){
     return output;
 }
 
-static void _TreeDumpOutNodes(const TreeNode* node){
+void _TreeDumpOutNodes(const TreeNode* node) {
     if(node != NULL){
         TreeNodePairOut(node);
         _TreeDumpOutNodes(node->left);
@@ -173,7 +172,7 @@ void _TreeDump(
         );
 
     /*if TreeBin pointer is correct*/
-    if(!(tree_errors.bit_mask & TREE_ERROR_BAD_BIN_POINTER)){
+    if(!(tree_errors.bit_mask & TREE_ERROR_BAD_BIN_POINTER)) {
         printf("\t{\n");
         printf("\t\t nodes              = %p\n",    tree->nodes             );
         printf("\t\t number_of_nodes    = %lu\n",   tree->number_of_nodes   );
@@ -216,22 +215,29 @@ void _TreeDump(
     if(tree_errors.bit_mask & TREE_ERROR_MAKENODE_BAD_STATUS    ) printf("\t\t"), PrintError(TREE_ERROR_MAKENODE_BAD_STATUS         );
     if(tree_errors.bit_mask & TREE_ERROR_INCORRECT_TREE_SIZE    ) printf("\t\t"), PrintError(TREE_ERROR_INCORRECT_TREE_SIZE         );
     if(tree_errors.bit_mask & TREE_ERROR_TREECTOR_NOT_ALLOC_MEM ) printf("\t\t"), PrintError(TREE_ERROR_TREECTOR_NOT_ALLOC_MEM      );
-    
     printf("\t}\n");
 
     _TreeDumpOutNodes(tree->nodes);
 
 }
 
-void TreeNodeDeleteBranch(TreeBin* tree, TreeNode* node){
-    if(node != NULL){
+void TreeNodeDeleteBranch(
+                            TreeBin* tree, 
+                            TreeNode* node
+                        )
+{
+    if(node != NULL) {
         TreeNodeDeleteBranch(tree, node->left);
         TreeNodeDeleteBranch(tree, node->right);
         TreeNodeDeleteVertex(tree, node);
     }
 }
 
-void TreeNodeDeleteVertex(TreeBin* tree, TreeNode* node){
+void TreeNodeDeleteVertex(
+                            TreeBin* tree, 
+                            TreeNode* node
+                        )
+{
     
     tree_assert(
                     tree != NULL, 
@@ -249,13 +255,11 @@ void TreeNodeDeleteVertex(TreeBin* tree, TreeNode* node){
                     VOID
                 );
 
-    if(node->father != NULL){
-        if(node->father->left == node){
+    if(node->father != NULL) {
+        if(node->father->left == node)
             node->father->left = NULL;
-        }
-        else if(node->father->right == node){
+        else if(node->father->right == node)
             node->father->right = NULL;
-        }
         else
             tree_assert(
                             false,
@@ -293,6 +297,7 @@ TreeNode* TreeNodeMake(
                         const TREE_NODE_STATUS status
                     )
 {
+
     tree_assert(
                     tree != NULL, 
                     tree, 
@@ -300,6 +305,7 @@ TreeNode* TreeNodeMake(
                     "Incorrect pointer to the tree!",
                     NON_VOID
                 );
+
     tree_assert(
                     element != NULL, 
                     tree, 
@@ -355,7 +361,11 @@ TreeNode* TreeNodeMake(
     return node;
 }
 
-void TreeSetElement(TreeBin* tree, void* element){
+void TreeSetElement(
+                        TreeBin* tree, 
+                        const void* element
+                    )
+{
 
     tree_assert(
                     tree != NULL, 
@@ -364,6 +374,7 @@ void TreeSetElement(TreeBin* tree, void* element){
                     "Incorrect pointer to the tree!",
                     VOID
                 );
+
     tree_assert(
                     element != NULL, 
                     tree, 
@@ -373,11 +384,12 @@ void TreeSetElement(TreeBin* tree, void* element){
                 );
 
     int compare_status = 0;
+
     TreeNode* father    = NULL;
     TreeNode* node      = tree->nodes;
 
     do{
-        if(node == NULL){
+        if(node == NULL) {
             node = TreeNodeMake(tree, father, element, (TREE_NODE_STATUS)compare_status);
             return;
         }
@@ -409,7 +421,7 @@ void TreeSetElement(TreeBin* tree, void* element){
                                 VOID
                             );
         }
-    }while(compare_status);
+    } while(compare_status);
 
     tree_assert(
                     false,
@@ -421,7 +433,11 @@ void TreeSetElement(TreeBin* tree, void* element){
     );
 }
 
-void TreeOut(TreeBin* tree, TREE_OUT_TYPE out_type){
+void TreeOut(
+                TreeBin* tree, 
+                TREE_OUT_TYPE out_type
+            )
+{
 
     tree_assert(
                     tree != NULL, 
@@ -434,38 +450,44 @@ void TreeOut(TreeBin* tree, TREE_OUT_TYPE out_type){
     TreeBranchOut(tree, tree->nodes, out_type);
 }
 
-void TreeBranchOut(TreeBin* tree, const TreeNode* node, TREE_OUT_TYPE out_type){
-    if(node != NULL){
-        switch (out_type)
-        {
-        case TREE_NORMAL_OUT:{
-            TreeBranchOut(tree, node->left, out_type);
-            tree->ContainerPrint(node->container);
-            TreeBranchOut(tree, node->right, out_type);
-            break;
-        }
-        case TREE_REVERSE_OUT:{
-            TreeBranchOut(tree, node->right, out_type);
-            tree->ContainerPrint(node->container);
-            TreeBranchOut(tree, node->left, out_type);
-            break;
-        }
-        default:
-            tree_assert(
-                            false,
-                            tree,
-                            TREE_ERROR_BAD_OUT_TYPE,
-                            "You must chose one of TREE_OUT_TYPE!",
-                            VOID
-                        );
+void TreeBranchOut(
+                        TreeBin* tree, 
+                        const TreeNode* node, 
+                        TREE_OUT_TYPE out_type
+                    )
+{
+    if(node != NULL) {
+        switch (out_type) {
+            case TREE_NORMAL_OUT:
+                {
+                    TreeBranchOut(tree, node->left, out_type);
+                    tree->ContainerPrint(node->container);
+                    TreeBranchOut(tree, node->right, out_type);
+                    break;
+                }
+            case TREE_REVERSE_OUT:
+                {
+                    TreeBranchOut(tree, node->right, out_type);
+                    tree->ContainerPrint(node->container);
+                    TreeBranchOut(tree, node->left, out_type);
+                    break;
+                }
+            default:
+                tree_assert(
+                                false,
+                                tree,
+                                TREE_ERROR_BAD_OUT_TYPE,
+                                "You must chose one of TREE_OUT_TYPE!",
+                                VOID
+                            );
         }
 
     }
 }
 
-void TreeNodePairOut(const TreeNode* node){
+void TreeNodePairOut(const TreeNode* node) {
     putchar('\n');
-    if(node != NULL && node->left != NULL){
+    if(node != NULL && node->left != NULL) {
         printf(
                 "\t\t\t\t"
                 SETLIGHTCOLOR(GREEN)
@@ -494,7 +516,7 @@ void TreeNodePairOut(const TreeNode* node){
         "\n",
         node
     );
-	if(node != NULL && node->right != NULL){
+	if(node != NULL && node->right != NULL) {
 	    printf(
                 "\t\t\t\t"
                 WRITEBACKGROUNDCOLOR(PURPLE, "\\")
@@ -513,7 +535,11 @@ void TreeNodePairOut(const TreeNode* node){
     putchar('\n');   
 }
 
-TreeNode* TreeNodeFindElement(TreeBin* tree, const void* element){
+TreeNode* TreeNodeFindElement(
+                                TreeBin* tree, 
+                                const void* element
+                            )
+{
 
     tree_assert(
                     tree != NULL, 
@@ -522,6 +548,7 @@ TreeNode* TreeNodeFindElement(TreeBin* tree, const void* element){
                     "Incorrect pointer to the tree!",
                     NON_VOID
                 );
+
     tree_assert(
                     element != NULL, 
                     tree, 
@@ -534,7 +561,7 @@ TreeNode* TreeNodeFindElement(TreeBin* tree, const void* element){
 
     TreeNode* node = tree->nodes;
 
-    do{
+    do {
         compare_status = tree->ContainerComp(node->container, element);
         switch (compare_status) {
             case TREE_THIS:
@@ -565,12 +592,12 @@ TreeNode* TreeNodeFindElement(TreeBin* tree, const void* element){
                                 NON_VOID
                             );
         }
-    }while(compare_status);
+    } while(compare_status);
 
     return NULL;
 }
 
-TreeNode* TreeNodeGetMin(TreeNode* node){
+TreeNode* TreeNodeGetMin(TreeNode* node) {
     if(node == NULL)
         return NULL;
 
@@ -580,7 +607,11 @@ TreeNode* TreeNodeGetMin(TreeNode* node){
     return node;
 }
 
-void TreeDelElement(TreeBin* tree, void* element){
+void TreeDelElement(
+                        TreeBin* tree, 
+                        const void* element
+                    )
+{
 
     tree_assert(
                     tree != NULL, 
@@ -589,6 +620,7 @@ void TreeDelElement(TreeBin* tree, void* element){
                     "Incorrect pointer to the tree!",
                     VOID
                 );
+
     tree_assert(
                     element != NULL, 
                     tree, 
@@ -609,7 +641,7 @@ void TreeDelElement(TreeBin* tree, void* element){
                     VOID
                 );
 
-    if(node_element->left == NULL && node_element->right == NULL){
+    if(node_element->left == NULL && node_element->right == NULL) {
         
         TreeNodeDeleteVertex(tree, node_element);
     }
@@ -640,7 +672,7 @@ void TreeDelElement(TreeBin* tree, void* element){
                             VOID
                         );
             
-        if(node_replacement->left != NULL || node_replacement->right != NULL){
+        if(node_replacement->left != NULL || node_replacement->right != NULL) {
             void* new_value = tree->ContainerCtor(node_replacement->container);
             tree_assert(
                             new_value != NULL,

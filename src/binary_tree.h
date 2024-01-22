@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <time.h>
 
 #include "GlobalHeaders/config.h"
 #include "GlobalHeaders/colors.h"

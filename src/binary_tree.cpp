@@ -162,6 +162,9 @@ void _TreeDump(
     const char* correctForOutputFuNm = (func_name == NULL) ? "???" : func_name;
     const char* correctForOutputFlNm = (file_name == NULL) ? "???" : file_name;
 
+    long int dump_time = time(NULL);
+    printf("Dump Time: %s\n", ctime(&dump_time));
+
     printf(
             "Tree[%p] %s called from %s in %s(%d)\n", 
             tree, 
@@ -191,7 +194,7 @@ void _TreeDump(
         printf("\t}\n");
     }
 
-    printf("Error list:\n");
+    printf(WRITELIGHTCOLOR(RED, "Error list:\n"));
     printf("\t{\n");
     if(tree_errors.bit_mask & TREE_ERROR_BAD_BIN_POINTER    ) printf("\t\t"), PrintError(TREE_ERROR_BAD_BIN_POINTER     );
     if(tree_errors.bit_mask & TREE_ERROR_BAD_NODE_POINTER   ) printf("\t\t"), PrintError(TREE_ERROR_BAD_NODE_POINTER    );

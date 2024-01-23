@@ -2,7 +2,6 @@
 #define BINARY_TREE
 
 #include <malloc.h>
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -62,7 +61,8 @@ Assert, signals errors, works only in debug mode*/
         ON_DEBUG                                                        \
             (                                                           \
                 if(!(condition)){                                       \
-                    printf(                                             \
+                    fprintf(                                            \
+                            TREE_DEBUG_OUTPUT_STREAM,                   \
                             WRITEBACKGROUNDCOLOR(RED, "FATAL_ERROR:")   \
                             " "                                         \
                             WRITELIGHTCOLOR(YELLOW, "%s")               \
@@ -77,7 +77,8 @@ Assert, signals errors, works only in debug mode*/
                             __PRETTY_FUNCTION__,                        \
                             #condition                                  \
                             );                                          \
-                    printf(                                             \
+                    fprintf(                                            \
+                            TREE_DEBUG_OUTPUT_STREAM,                   \
                             WRITELIGHTCOLOR(RED, "ERROR_TEXT:")         \
                             " "                                         \
                             WRITELIGHTCOLOR(GREEN, "%s\n"),             \
@@ -187,6 +188,8 @@ enum TREE_ERRORS_CODE{
     TREE_ERROR_TREECTOR_NOT_ALLOC_MEM   = 1 << 20,
     /*The TreeNodeFindElement function did not find the specified element*/
     TREE_ERROR_ELEMENT_NOT_FOUND        = 1 << 21,
+    /*Zero output stream is set*/
+    TREE_ERROR_BAD_OUT_STREAM           = 1 << 22
 };
 
 /*Node Struct*/
@@ -243,7 +246,12 @@ typedef struct _TreeBin
 } TreeBin;
 
 /*The value of the null node*/
-static const TreeNode NULLNODE = {NULL, NULL, NULL, NULL};
+static const TreeNode NULLNODE = {
+                                    NULL, /*container   */
+                                    NULL, /*father      */
+                                    NULL, /*left        */
+                                    NULL  /*right       */
+                                };
 
 /*Tree Constructor*/
 TreeBin* _TreeCtor(
@@ -275,7 +283,6 @@ ATTENTION: This function does not pay attention to the existing errors in the tr
 That is, it does NOT take into account error_status*/
 TreeErrors TreeVerificator(const TreeBin* tree);
 
-#warning Can add buf
 /*Out All errors and all tree*/
 void _TreeDump(
                 const TreeBin* tree,
@@ -311,7 +318,7 @@ void TreeDelElement(
 /*Checks if the element exists
 If so, returns a pointer to it
 If not, it returns NULL*/
-TreeNode* TreeNodeFindElement(
+TreeNode* TreeFindElement(
                                 TreeBin* tree, 
                                 const void* element
                             );
@@ -346,10 +353,25 @@ void TreeBranchOut(
                     const TREE_OUT_TYPE out_type = TREE_NORMAL_OUT
                 );
 
-/*Beautiful PairOut output for DUMP*/
-void TreeNodePairOut(const TreeNode* node);
+/*An optional function, outputs 
+a tree branch beautifully, 
+is used for the dump function, 
+but can also be used separately*/
+void TreeNodePairOut(   
+                        FILE* out_stream,
+                        const TreeNode* node
+                    );
 
 /*Returns the minimum element, returns NULL in case of failure*/
 TreeNode* TreeNodeGetMin(TreeNode* node);
+/*Returns the maximum element, returns NULL in case of failure*/
+TreeNode* TreeNodeGetMax(TreeNode* node);
+
+/*Set the output stream for dumps and asserts. 
+According to the standard, 
+there is an output stream stdout*/
+void TreeSetDebugOutStream(FILE* new_out_stream);
+/*Returns the output stream to its original state (i.e. stdout)*/
+void TreeResetDebugOutStream();
 
 #endif

@@ -1,6 +1,10 @@
 #include <stdio.h>
+#include <assert.h>
 
 #include "src/binary_tree.h"
+
+/*The file for containerPrint*/
+FILE*       my_out_file         = NULL;
 
 /*Simpe struct for example*/
 typedef struct _Container
@@ -26,6 +30,15 @@ Bijection of two natural numbers into one*/
 unsigned long long f(unsigned long long, unsigned long long);
 
 int main(void) {
+    /*For an example of the capabilities of the containerPrint function, 
+    the values will be written to a separate file*/
+    my_out_file = stdout; //fopen(my_out_file_name, "w");
+
+    /*You can change the output stream of the dump and errors 
+    (just keep in mind that the output will be colored, 
+    this can be disabled in the config)*/
+    //TreeSetDebugOutStream(my_out_file);
+
     /*The tree constructor itself
     A macro is called, the _TreeCtor function call is supplemented 
     with the file name, line number, and function name*/
@@ -36,7 +49,8 @@ int main(void) {
                                 containerComp,
                                 containerPrint
                             );
-    /*A simple example of filling a tree*/                        
+    /*A simple example of filling a tree*/
+    srand((unsigned int)time(NULL));                        
     for(size_t i = 0; i < 10; i++){
         /*Example of a container*/
         Container cont = {
@@ -54,6 +68,9 @@ int main(void) {
         TreeSetElement(tree, (void*)(&cont));
     }
 
+    Container example = {123, 'z'};
+    TreeSetElement(tree, (void*)(&example));
+
     /*The output of the tree, by means of recursion, 
     the user's containerPrint function is called*/
     TreeOut(tree, TREE_REVERSE_OUT);
@@ -61,6 +78,31 @@ int main(void) {
     /*Macro calling _TreeDump 
     (for the sake of file name, line number and function name )*/
     TreeDump(tree, {TREE_ALL_OK});
+
+    /*Example of returning the minimum and maximum element*/
+    printf("MIN NODE:");
+    containerPrint(TreeNodeGetMin(tree->nodes)->container);
+    printf("MAX NODE:");
+    containerPrint(TreeNodeGetMax(tree->nodes)->container);
+
+    /*Example of searching for an element in a tree*/
+    TreeNode* found_node_example = TreeFindElement(tree, (void*)(&example));
+    printf("FOUND NODE:");
+    containerPrint(found_node_example->container);
+
+    /*Example of deleting an element from a tree*/
+    TreeDelElement(tree, found_node_example->container);
+    TreeOut(tree, TREE_REVERSE_OUT);
+
+    /*Example of returning the minimum and maximum element*/
+    printf("NEW MIN NODE:");
+    containerPrint(TreeNodeGetMin(tree->nodes)->container);
+    printf("NEW MAX NODE:");
+    containerPrint(TreeNodeGetMax(tree->nodes)->container);
+
+    /*An example of the output of a pair*/
+    printf("An example of the output of a pair:");
+    TreeNodePairOut(stdout, tree->nodes);
 
     /*The destructor of the tree, 
     including recursively calling the user's containerDtor function*/
@@ -93,7 +135,13 @@ int containerComp(const void* a, const void* b){
 }
 void containerPrint(const void* containter_pointer){
     const Container* container = (const Container*)containter_pointer;
-    printf("NUM : %llu, VAL : %c;\n", container->key, container->value);
+    fprintf(
+        my_out_file, 
+        "ADDR: %p, NUM : %llu, VAL : %c;\n", 
+        containter_pointer,
+        container->key, 
+        container->value
+    );
 }
 
 unsigned long long f(unsigned long long x, unsigned long long y) {
